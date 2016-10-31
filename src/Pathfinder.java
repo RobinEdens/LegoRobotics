@@ -52,16 +52,16 @@ public class Pathfinder {
 						while (colorSense.getColorID() != Color.BLACK) {
 							pilot.rotate(turnA);
 							pilot.rotate(Math.abs(turnB));
-							turnA += turnB;
-							turnB *= 2;
+							turnA -= 40;
+							turnB -= 40;
 						}
 					}
 					else {
 						while (colorSense.getColorID() != Color.BLACK) {
 							pilot.rotate(Math.abs(turnA));
 							pilot.rotate(turnB);
-							turnA -= Math.abs(turnB);
-							turnB *= 2;
+							turnA -= 40;
+							turnB -= 40;
 						}
 					}
 						
