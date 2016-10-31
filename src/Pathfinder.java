@@ -23,11 +23,11 @@ public class Pathfinder {
 		DifferentialPilot pilot = new DifferentialPilot(1.75f, 4.65f, Motor.A, Motor.C);
 		TouchSensor touch = new TouchSensor(SensorPort.S4);
 		ColorSensor colorSense = new ColorSensor(SensorPort.S1);
-		boolean rightTurn = false;
-		int turnA = -20;
-		int turnB = -40;
+		boolean rightTurn = true;
+		int turnA = -30;
+		int turnB = -60;
 		
-		pilot.setTravelSpeed(1);
+		pilot.setTravelSpeed(15);
 		pilot.setRotateSpeed(90);
 		System.out.println("Hello World!");
 		
@@ -45,28 +45,32 @@ public class Pathfinder {
 				//	#FIXME add extra movement to align self on top of line proper
 					}
 				
-				while (colorSense.getColorID()== Color.WHITE) {
+				if (colorSense.getColorID() == Color.WHITE) {
 					pilot.stop();
 					System.out.println("Line has been lost. Searching...");
 					if(rightTurn) {
 						while (colorSense.getColorID() != Color.BLACK) {
-							pilot.rotate(turnA);
-							pilot.rotate(Math.abs(turnB));
-							turnA -= 40;
-							turnB -= 40;
+							pilot.rotate(turnA, true);
+							rightTurn = false;
+							pilot.rotate(Math.abs(turnB), true);
+							rightTurn = true;
+							turnA -= 60;
+							turnB -= 60;
 						}
 					}
 					else {
 						while (colorSense.getColorID() != Color.BLACK) {
-							pilot.rotate(Math.abs(turnA));
-							pilot.rotate(turnB);
-							turnA -= 40;
-							turnB -= 40;
+							pilot.rotate(Math.abs(turnA), true);
+							rightTurn = true;
+							pilot.rotate(turnB, true);
+							rightTurn = false;
+							turnA -= 60;
+							turnB -= 60;
 						}
 					}
 						
-					turnA = -20;
-					turnB = -40;
+					turnA = -30;
+					turnB = -60;
 					System.out.println("Line has been found. Continuing quest!");
 				}	
 				
