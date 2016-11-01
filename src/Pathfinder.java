@@ -73,12 +73,12 @@ public class Pathfinder {
 							pilot.rotate(Math.abs(turnA), true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
-								rightTurn = true;
 								break;
 							}
 							pilot.rotate(turnB, true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
+								rightTurn = true;
 								break;
 							}
 							turnA -= 60;
