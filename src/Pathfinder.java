@@ -27,13 +27,11 @@ public class Pathfinder {
 		int turnA = -30;
 		int turnB = -60;
 		
-		pilot.setTravelSpeed(15);
-		pilot.setRotateSpeed(90);
 		System.out.println("Hello World!");
 		
 		while (!Button.ENTER.isDown()) {	
 			System.out.println("Vroom vroom");
-			pilot.travel(40, true);
+			pilot.travel(50, true);
 
 			while(pilot.isMoving()) {
 				if (touch.isPressed()) {
@@ -42,17 +40,30 @@ public class Pathfinder {
 					pilot.travel(-4);
 					pilot.rotate(-90);
 					pilot.travelArc(9.5, 29.83, true);
-				//	#FIXME add extra movement to align self on top of line proper
+					if (colorSense.getColorID() == Color.BLACK) {
+						pilot.stop();
+						pilot.travel(12.5);
+						pilot.rotate(90);
+					}
 					}
 				
 				if (colorSense.getColorID() == Color.WHITE) {
 					pilot.stop();
+					pilot.getRotateSpeed();
 					System.out.println("Line has been lost. Searching...");
 					if(rightTurn) {
 						while (colorSense.getColorID() != Color.BLACK) {
 							pilot.rotate(turnA, true);
+							if (colorSense.getColorID() == Color.BLACK) {
+								pilot.stop();
+								break;
+							}
 							rightTurn = false;
 							pilot.rotate(Math.abs(turnB), true);
+							if (colorSense.getColorID() == Color.BLACK) {
+								pilot.stop();
+								break;
+							}
 							rightTurn = true;
 							turnA -= 60;
 							turnB -= 60;
@@ -61,8 +72,16 @@ public class Pathfinder {
 					else {
 						while (colorSense.getColorID() != Color.BLACK) {
 							pilot.rotate(Math.abs(turnA), true);
+							if (colorSense.getColorID() == Color.BLACK) {
+								pilot.stop();
+								break;
+							}
 							rightTurn = true;
 							pilot.rotate(turnB, true);
+							if (colorSense.getColorID() == Color.BLACK) {
+								pilot.stop();
+								break;
+							}
 							rightTurn = false;
 							turnA -= 60;
 							turnB -= 60;
