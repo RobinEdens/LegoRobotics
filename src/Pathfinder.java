@@ -42,14 +42,13 @@ public class Pathfinder {
 					pilot.travelArc(9.5, 29.83, true);
 					if (colorSense.getColorID() == Color.BLACK) {
 						pilot.stop();
-						pilot.travel(12.5);
+						pilot.travel(11.5);
 						pilot.rotate(90);
 					}
-					}
+				}
 				
-				if (colorSense.getColorID() == Color.WHITE) {
+				while (colorSense.getColorID() == Color.WHITE) {
 					pilot.stop();
-					pilot.getRotateSpeed();
 					System.out.println("Line has been lost. Searching...");
 					if(rightTurn) {
 						while (colorSense.getColorID() != Color.BLACK) {
@@ -58,13 +57,13 @@ public class Pathfinder {
 								pilot.stop();
 								break;
 							}
-							rightTurn = false;
+							
 							pilot.rotate(Math.abs(turnB), true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
+								rightTurn = false;
 								break;
 							}
-							rightTurn = true;
 							turnA -= 60;
 							turnB -= 60;
 						}
@@ -74,15 +73,14 @@ public class Pathfinder {
 							pilot.rotate(Math.abs(turnA), true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
+								rightTurn = true;
 								break;
 							}
-							rightTurn = true;
 							pilot.rotate(turnB, true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
 								break;
 							}
-							rightTurn = false;
 							turnA -= 60;
 							turnB -= 60;
 						}
