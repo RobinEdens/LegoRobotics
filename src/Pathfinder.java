@@ -1,5 +1,6 @@
 /**
- *
+ * Line tracing program for the Lego Robotics project; does its best to follow a black line throughout the course and do a victory
+ * dance on green.
  * @author Harper & Robin
  */
 import java.lang.Math;
@@ -18,7 +19,6 @@ public class Pathfinder {
 
 	public static void main(String[] args) {
 		
-		
 		// Length of brick is 7.5 inch; width is 3.5
 		DifferentialPilot pilot = new DifferentialPilot(1.75f, 4.65f, Motor.A, Motor.C);
 		TouchSensor touch = new TouchSensor(SensorPort.S4);
@@ -30,12 +30,15 @@ public class Pathfinder {
 		pilot.setRotateSpeed(60);
 		System.out.println("Hello World!");
 		
+		// Loops the program until the button on top of robot is pressed down (or stops within code)
 		while (!Button.ENTER.isDown()) {	
+			// Moves forward while line is black
 			while (colorSense.getColorID() == Color.BLACK) {	
 				System.out.println("Vroom vroom");
 				pilot.travel(50, true);
 			}
 			
+			// Allows code execution while robot is doing any traveling
 			while(pilot.isMoving()) {
 				if (touch.isPressed()) {
 					pilot.stop();
@@ -43,18 +46,24 @@ public class Pathfinder {
 					pilot.travel(-4);
 					pilot.rotate(-90);
 					pilot.travelArc(13.5, 21.2, true);
-					if (colorSense.getColorID() == Color.BLACK) {
-						pilot.stop();
-						pilot.travel(11.5);
-						pilot.rotate(90);
+					while(pilot.isMoving()) {
+						if (colorSense.getColorID() == Color.BLACK) {
+							pilot.stop();
+							pilot.travel(11.5);
+							pilot.rotate(90);
+						}
 					}
 				}
-				if (colorSense.getColorID() != Color.BLACK) {
+				if (colorSense.getColorID() != Color.BLACK || colorSense.getColorID() == Color.GREEN) {
 					pilot.stop();
 				}
 			}
-			while (colorSense.getColorID() != Color.BLACK) {
-				pilot.stop();
+			
+			// Code here isn't the best at all, with all the breaks and having to search for green, but it's the last day and we 
+			// really can't redo this all from scratch, rip; it's meant to keep track of which turn the line was found last, and since 
+			// the majority of the course veers right, most of the time, finding the line on the right once means it will find
+			// the line on the right the next time
+			while (colorSense.getColorID() != Color.BLACK || colorSense.getColorID() != Color.GREEN) {
 				System.out.println("Line has been lost. Searching...");
 				if(rightTurn) {
 					while (colorSense.getColorID() != Color.BLACK) {
@@ -111,10 +120,11 @@ public class Pathfinder {
 				turnB = -60;
 				System.out.println("Line has been found. Continuing quest!");
 			}	
-				
+			
+			// Victory dance/jingle
 			if (colorSense.getColorID() == Color.GREEN) {
-				pilot.stop();
 				System.out.println("Victory!");
+				Sound.playSample(FFVictory.wav, 100);
 				pilot.rotate(360);
 				pilot.rotate(-360);
 				Sound.beep();
