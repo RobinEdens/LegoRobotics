@@ -26,79 +26,99 @@ public class Pathfinder {
 		boolean rightTurn = true;
 		int turnA = -30;
 		int turnB = -60;
-		
+		pilot.setTravelSpeed(15);
+		pilot.setRotateSpeed(60);
 		System.out.println("Hello World!");
 		
 		while (!Button.ENTER.isDown()) {	
-			System.out.println("Vroom vroom");
-			pilot.travel(50, true);
-
+			while (colorSense.getColorID() == Color.BLACK) {	
+				System.out.println("Vroom vroom");
+				pilot.travel(50, true);
+			}
+			
 			while(pilot.isMoving()) {
 				if (touch.isPressed()) {
 					pilot.stop();
 					System.out.println("Something is in my way!");
 					pilot.travel(-4);
 					pilot.rotate(-90);
-					pilot.travelArc(9.5, 29.83, true);
+					pilot.travelArc(13.5, 21.2, true);
 					if (colorSense.getColorID() == Color.BLACK) {
 						pilot.stop();
 						pilot.travel(11.5);
 						pilot.rotate(90);
 					}
 				}
-				
-				while (colorSense.getColorID() == Color.WHITE) {
+				if (colorSense.getColorID() != Color.BLACK) {
 					pilot.stop();
-					System.out.println("Line has been lost. Searching...");
-					if(rightTurn) {
-						while (colorSense.getColorID() != Color.BLACK) {
-							pilot.rotate(turnA, true);
+				}
+			}
+			while (colorSense.getColorID() != Color.BLACK) {
+				pilot.stop();
+				System.out.println("Line has been lost. Searching...");
+				if(rightTurn) {
+					while (colorSense.getColorID() != Color.BLACK) {
+						pilot.rotate(turnA, true);
+						while(pilot.isMoving()) {
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
-								break;
 							}
-							
-							pilot.rotate(Math.abs(turnB), true);
+						}
+						if (colorSense.getColorID() == Color.BLACK || colorSense.getColorID() == Color.GREEN) {
+							break;
+						}
+						pilot.rotate(Math.abs(turnB), true);
+						while(pilot.isMoving()) {
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
 								rightTurn = false;
-								break;
 							}
-							turnA -= 60;
-							turnB -= 60;
 						}
+						if (colorSense.getColorID() == Color.BLACK ||colorSense.getColorID() == Color.GREEN) {
+							break;
+						}
+						turnA -= 60;
+						turnB -= 60;
 					}
-					else {
-						while (colorSense.getColorID() != Color.BLACK) {
-							pilot.rotate(Math.abs(turnA), true);
+				}
+				else {
+					while (colorSense.getColorID() != Color.BLACK) {
+						pilot.rotate(Math.abs(turnA), true);
+						while (pilot.isMoving()) {
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
-								break;
 							}
-							pilot.rotate(turnB, true);
+						}
+						if (colorSense.getColorID() == Color.BLACK || colorSense.getColorID() == Color.GREEN) {
+							break;
+						}
+						pilot.rotate(turnB, true);
+						while (pilot.isMoving()) {
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
 								rightTurn = true;
-								break;
 							}
-							turnA -= 60;
-							turnB -= 60;
 						}
+						if (colorSense.getColorID() == Color.BLACK || colorSense.getColorID() == Color.GREEN) {
+							break;
+						}
+						turnA -= 60;
+						turnB -= 60;
 					}
-						
-					turnA = -30;
-					turnB = -60;
-					System.out.println("Line has been found. Continuing quest!");
-				}	
-				
-				if (colorSense.getColorID() == Color.GREEN) {
-					pilot.stop();
-					System.out.println("Victory!");
-					pilot.rotate(360);
-					pilot.rotate(-360);
-					Sound.beep();
-					return;
 				}
+						
+				turnA = -30;
+				turnB = -60;
+				System.out.println("Line has been found. Continuing quest!");
+			}	
+				
+			if (colorSense.getColorID() == Color.GREEN) {
+				pilot.stop();
+				System.out.println("Victory!");
+				pilot.rotate(360);
+				pilot.rotate(-360);
+				Sound.beep();
+				return;
 			}
 		}
 	}
