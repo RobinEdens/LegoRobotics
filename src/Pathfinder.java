@@ -27,7 +27,7 @@ public class Pathfinder {
 		int turnA = -30;
 		int turnB = -60;
 		pilot.setTravelSpeed(15);
-		pilot.setRotateSpeed(60);
+		pilot.setRotateSpeed(65);
 		System.out.println("Hello World!");
 		
 		// Loops the program until the button on top of robot is pressed down (or stops within code)
@@ -35,7 +35,7 @@ public class Pathfinder {
 			// Moves forward while line is black
 			while (colorSense.getColorID() == Color.BLACK) {	
 				System.out.println("Vroom vroom");
-				pilot.travel(50, true);
+				pilot.travel(40, true);
 			}
 			
 			// Allows code execution while robot is doing any traveling
@@ -45,12 +45,14 @@ public class Pathfinder {
 					System.out.println("Something is in my way!");
 					pilot.travel(-4);
 					pilot.rotate(-90);
-					pilot.travelArc(13.5, 21.2, true);
+					pilot.travelArc(10, 31.4, true);
 					while(pilot.isMoving()) {
 						if (colorSense.getColorID() == Color.BLACK) {
 							pilot.stop();
 							pilot.travel(11.5);
-							pilot.rotate(90);
+							pilot.rotate(90, true);
+							if (colorSense.getColorID() == Color.BLACK) {
+								pilot.stop();
 						}
 					}
 				}
@@ -83,7 +85,7 @@ public class Pathfinder {
 								rightTurn = false;
 							}
 						}
-						if (colorSense.getColorID() == Color.BLACK ||colorSense.getColorID() == Color.GREEN) {
+						if (colorSense.getColorID() == Color.BLACK || colorSense.getColorID() == Color.GREEN) {
 							break;
 						}
 						turnA -= 60;
