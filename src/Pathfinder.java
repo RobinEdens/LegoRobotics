@@ -16,7 +16,7 @@ import lejos.nxt.ColorSensor.Color;
 
 public class Pathfinder {
 
-
+	// Victory dance done after green is found
 	public static void Victory (DifferentialPilot pilot) {
 		System.out.println("Victory!");
 		pilot.setRotateSpeed(80);
@@ -74,10 +74,7 @@ public class Pathfinder {
 			}
 			
 
-			// Code here isn't the best at all, with all the breaks and having to search for green, but it's the last day and we 
-			// really can't redo this all from scratch, rip; it's meant to keep track of which turn the line was found last, and since 
-			// the majority of the course veers right, most of the time, finding the line on the right once means it will find
-			// the line on the right the next time
+			// Searches for the black line when the color sensor loses it
 			while (colorSense.getColorID() != Color.BLACK) {
 				
 				pilot.setRotateSpeed(50);
