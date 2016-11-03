@@ -17,17 +17,27 @@ import lejos.nxt.ColorSensor.Color;
 public class Pathfinder {
 
 
+	public static void Victory (DifferentialPilot pilot) {
+		System.out.println("Victory!");
+		pilot.setRotateSpeed(80);
+		//Sound.playSample(FFVictory.wav, 100);
+		pilot.rotate(360);
+		pilot.rotate(-360);
+		Sound.beep();
+		return;
+	}
+	
 	public static void main(String[] args) {
 		
 		// Length of brick is 7.5 inch; width is 3.5
-		DifferentialPilot pilot = new DifferentialPilot(1.75f, 4.65f, Motor.A, Motor.C);
+		DifferentialPilot pilot = new DifferentialPilot(2f, 4.75f, Motor.A, Motor.C);
 		TouchSensor touch = new TouchSensor(SensorPort.S4);
 		ColorSensor colorSense = new ColorSensor(SensorPort.S1);
 		boolean rightTurn = true;
 		int turnA = -30;
 		int turnB = -60;
 		pilot.setTravelSpeed(15);
-		pilot.setRotateSpeed(65);
+		pilot.setRotateSpeed(55);
 		System.out.println("Hello World!");
 		
 		// Loops the program until the button on top of robot is pressed down (or stops within code)
@@ -42,17 +52,19 @@ public class Pathfinder {
 			while(pilot.isMoving()) {
 				if (touch.isPressed()) {
 					pilot.stop();
+					pilot.setRotateSpeed(80);
 					System.out.println("Something is in my way!");
 					pilot.travel(-4);
 					pilot.rotate(-90);
-					pilot.travelArc(10, 31.4, true);
+					pilot.travelArc(9, 45, true);
 					while(pilot.isMoving()) {
 						if (colorSense.getColorID() == Color.BLACK) {
 							pilot.stop();
-							pilot.travel(11.5);
-							pilot.rotate(90, true);
+							pilot.travel(3);
+							pilot.rotate(-105, true);
 							if (colorSense.getColorID() == Color.BLACK) {
 								pilot.stop();
+							}
 						}
 					}
 				}
@@ -61,12 +73,21 @@ public class Pathfinder {
 				}
 			}
 			
+
 			// Code here isn't the best at all, with all the breaks and having to search for green, but it's the last day and we 
 			// really can't redo this all from scratch, rip; it's meant to keep track of which turn the line was found last, and since 
 			// the majority of the course veers right, most of the time, finding the line on the right once means it will find
 			// the line on the right the next time
-			while (colorSense.getColorID() != Color.BLACK || colorSense.getColorID() != Color.GREEN) {
+			while (colorSense.getColorID() != Color.BLACK) {
+				
+				pilot.setRotateSpeed(50);
 				System.out.println("Line has been lost. Searching...");
+
+				if (colorSense.getColorID() == Color.GREEN) {
+					Victory(pilot);
+					return;
+				}
+				
 				if(rightTurn) {
 					while (colorSense.getColorID() != Color.BLACK) {
 						pilot.rotate(turnA, true);
@@ -122,16 +143,6 @@ public class Pathfinder {
 				turnB = -60;
 				System.out.println("Line has been found. Continuing quest!");
 			}	
-			
-			// Victory dance/jingle
-			if (colorSense.getColorID() == Color.GREEN) {
-				System.out.println("Victory!");
-				Sound.playSample(FFVictory.wav, 100);
-				pilot.rotate(360);
-				pilot.rotate(-360);
-				Sound.beep();
-				return;
-			}
 		}
 	}
 }
