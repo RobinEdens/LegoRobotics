@@ -3,6 +3,7 @@
  * dance on green.
  * @author Harper & Robin
  */
+import java.io.File;
 import java.lang.Math;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
@@ -10,38 +11,38 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.util.Delay;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.ColorSensor.Color;
 
 public class Pathfinder {
 
+	final static File ffVictory = new File ("FFVictory.wav");
+	
 	// Victory dance done after green is found
-	public static void Victory (DifferentialPilot pilot) {
-		System.out.println("Victory!");
-		pilot.setRotateSpeed(80);
-		//Sound.playSample(FFVictory.wav, 100);
+	public static void victoryDance (DifferentialPilot pilot) {
+		System.out.println("Finish line found. Victory!");
+		Sound.playSample(ffVictory, 100);
+		pilot.setRotateSpeed(70);
 		pilot.rotate(360);
 		pilot.rotate(-360);
 		Sound.beep();
-		return;
 	}
 	
 	public static void main(String[] args) {
-		
-		// Length of brick is 7.5 inch; width is 3.5
 		DifferentialPilot pilot = new DifferentialPilot(2f, 4.75f, Motor.A, Motor.C);
 		TouchSensor touch = new TouchSensor(SensorPort.S4);
 		ColorSensor colorSense = new ColorSensor(SensorPort.S1);
 		boolean rightTurn = true;
 		int turnA = -30;
 		int turnB = -60;
-		pilot.setTravelSpeed(15);
-		pilot.setRotateSpeed(55);
+		
+		pilot.setTravelSpeed(17.5);
+		pilot.setRotateSpeed(50);
 		System.out.println("Hello World!");
 		
 		// Loops the program until the button on top of robot is pressed down (or stops within code)
 		while (!Button.ENTER.isDown()) {	
+		
 			// Moves forward while line is black
 			while (colorSense.getColorID() == Color.BLACK) {	
 				System.out.println("Vroom vroom");
@@ -50,6 +51,8 @@ public class Pathfinder {
 			
 			// Allows code execution while robot is doing any traveling
 			while(pilot.isMoving()) {
+				
+				// Algorithm to get passed the brick
 				if (touch.isPressed()) {
 					pilot.stop();
 					pilot.setRotateSpeed(80);
@@ -62,13 +65,17 @@ public class Pathfinder {
 							pilot.stop();
 							pilot.travel(3);
 							pilot.rotate(-105, true);
-							if (colorSense.getColorID() == Color.BLACK) {
-								pilot.stop();
+							while(pilot.isMoving()) {
+								if (colorSense.getColorID() == Color.BLACK) {
+									pilot.stop();
+								}
 							}
 						}
 					}
 				}
-				if (colorSense.getColorID() != Color.BLACK || colorSense.getColorID() == Color.GREEN) {
+				
+				// Breaks loop to allow outside code execution
+				if (colorSense.getColorID() != Color.BLACK) {
 					pilot.stop();
 				}
 			}
@@ -76,15 +83,12 @@ public class Pathfinder {
 
 			// Searches for the black line when the color sensor loses it
 			while (colorSense.getColorID() != Color.BLACK) {
-				
 				pilot.setRotateSpeed(50);
 				System.out.println("Line has been lost. Searching...");
-
 				if (colorSense.getColorID() == Color.GREEN) {
-					Victory(pilot);
+					victoryDance(pilot);
 					return;
 				}
-				
 				if(rightTurn) {
 					while (colorSense.getColorID() != Color.BLACK) {
 						pilot.rotate(turnA, true);
